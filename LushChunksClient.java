@@ -36,7 +36,6 @@ public final class LushChunksClient implements ClientModInitializer {
 		// Taste L (aenderbar unter Steuerung -> Sonstiges)
 		toggleKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key." + MOD_ID + ".toggle",
-				InputConstants.Type.KEYSYM,
 				InputConstants.KEY_L,
 				KeyMapping.Category.MISC));
 
