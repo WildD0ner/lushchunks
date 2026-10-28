@@ -1,5 +1,4 @@
 plugins {
-	// Ab Minecraft 26.1 (unobfuskiert) heisst das Plugin "net.fabricmc.fabric-loom"
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
@@ -11,20 +10,32 @@ base {
 	archivesName = project.archives_base_name
 }
 
-repositories {
-	// Fuer Mod-Abhaengigkeiten bei Bedarf
-}
-
 dependencies {
-	// Kein "mappings"-Eintrag: 26.x ist unobfuskiert (Mojang-Namen).
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-
-	// Seit 26.1 ohne "mod"-Praefix.
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
 
+// Flaches Layout: alle Dateien liegen direkt im Hauptverzeichnis
+sourceSets {
+	main {
+		java {
+			srcDirs = ['.']
+			include '*.java'
+		}
+		resources {
+			srcDirs = []
+		}
+	}
+}
+
 processResources {
+	from('.') { include 'fabric.mod.json' }
+	from('.') {
+		include 'en_us.json', 'de_de.json'
+		into 'assets/lushchunks/lang'
+	}
+
 	inputs.property "version", project.version
 	inputs.property "minecraft_version", project.minecraft_version
 	inputs.property "loader_version", project.loader_version
@@ -42,16 +53,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-	// Minecraft 26.x benoetigt Java 25
 	sourceCompatibility = JavaVersion.VERSION_25
 	targetCompatibility = JavaVersion.VERSION_25
 	withSourcesJar()
-}
-
-jar {
-	inputs.property "archivesName", project.base.archivesName
-
-	from("LICENSE") {
-		rename { "${it}_${inputs.properties.archivesName}" }
-	}
 }
